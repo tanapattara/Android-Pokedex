@@ -1,16 +1,15 @@
-package th.ac.kku.cis.lab.pokedex.data.api
+package th.ac.kku.cis.lab.pokedex
 
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import th.ac.kku.cis.lab.pokedex.data.api.model.PokemonAPIResult
+import th.ac.kku.cis.lab.pokedex.model.PokemonAPIResult
 
 interface APIInterface {
 
     @GET("pokemon/")
-    suspend fun getPokemons() : Response<PokemonAPIResult>
+    fun getPokemons() : Call<PokemonAPIResult>
 
     companion object {
         var BASE_URL = "https://pokeapi.co/api/v2/"

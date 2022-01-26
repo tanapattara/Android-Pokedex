@@ -1,4 +1,4 @@
-package th.ac.kku.cis.lab.pokedex.data.api.model
+package th.ac.kku.cis.lab.pokedex.model
 
 data class Result(
     val name: String,
