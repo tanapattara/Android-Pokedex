@@ -2,13 +2,13 @@ package th.ac.kku.cis.lab.pokedex
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import th.ac.kku.cis.lab.pokedex.model.PokemonAPIResult
+import th.ac.kku.cis.lab.pokedex.data.api.APIInterface
+import th.ac.kku.cis.lab.pokedex.data.repository.PokemonRepo
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,9 +20,33 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter =  recyclerViewAdapter
 
+        val retrofitService = APIInterface.create()
+        val pokemonRepo = PokemonRepo(retrofitService)
+        var viewModel = ViewModelProvider(this,
+            MainActivityViewModelFactory(pokemonRepo))
+                .get(MainActivityViewModel::class.java)
+
+        /*
+        viewModel.pokemonList.observe(this,{
+            recyclerViewAdapter.setPokemonList(it)
+        })
+        */
+        viewModel.pokemonListItem.observe(this, {
+            recyclerViewAdapter.setPokemonList(it)
+        })
+        viewModel.loading.observe(this, {
+            val pgBar = findViewById<ProgressBar>(R.id.progressBar)
+            pgBar.visibility = if (it) View.VISIBLE else View.GONE
+        })
+        viewModel.loadPokemonData()
+        /*
+        var recyclerViewAdapter = RecyclerViewAdapter()
+        var recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter =  recyclerViewAdapter
+
         //get data from api
         val apiInterface = APIInterface.create().getPokemons()
-
         apiInterface.enqueue(object : Callback<PokemonAPIResult>{
             override fun onResponse(
                 call: Call<PokemonAPIResult>,
@@ -38,5 +62,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+
+         */
     }
 }
